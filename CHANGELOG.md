@@ -4,6 +4,10 @@
 ## [0.1.37] - TBD
 ### Added
 ### Changed
+- Progress bar is now web-based. You still call it the same way: `run(progress_bar=True)`
+
+- `AgentList.from_csv()` now allows you to include a CSV column "name" to pass an (optional) `name` to each `Agent` that is created from the CSV data. Other CSV columns are passed as agent `traits`. See an example:
+
 ### Fixed
 
 

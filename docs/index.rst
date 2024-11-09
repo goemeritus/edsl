@@ -38,22 +38,22 @@ Our tools simplify survey creation, experiment execution and response analysis.
 Common use cases include:
 
 Data labeling
-   Design tasks that involve labeling data as qualitative and quantitative questions about your data, then use language models to generate answers. See `examples <https://docs.expectedparrot.com/en/latest/notebooks/data_labeling_example.html>`_.
+   Use AI to answer qualitative and quantitative questions about your data, and extract insights. See `examples <https://docs.expectedparrot.com/en/latest/notebooks/data_labeling_example.html>`_.
 
 Market research
-   Administer surveys to gather insights on consumer preferences, behaviors and trends. Simulate customer personas with AI agents and analyze their responses. See `examples <https://docs.expectedparrot.com/en/latest/notebooks/yoga_studio_name_survey.html>`_.
+   Gather insights on consumer preferences, behaviors and trends. Simulate customer personas with AI agents and analyze their responses. See `examples <https://docs.expectedparrot.com/en/latest/notebooks/yoga_studio_name_survey.html>`_.
 
 User experience research
-   Create surveys to assess user satisfaction, usability and engagement. Use AI agents to simulate user profiles and analyze their feedback on products or services. See `examples <https://docs.expectedparrot.com/en/latest/notebooks/nps_survey.html>`_.
+   Assess user satisfaction, usability and engagement. Use AI agents to simulate user profiles and analyze their feedback on products or services. See `examples <https://docs.expectedparrot.com/en/latest/notebooks/nps_survey.html>`_.
 
 Integrate human and AI data
    Combine human responses with AI-generated responses to create richer datasets. See `examples <https://docs.expectedparrot.com/en/latest/notebooks/import_agents.html>`_.
 
 Analyze survey data
-   Generate or import survey data and analyze it with built-in methods. Simulate follow-up interviews using AI agent respondents. See `examples <https://docs.expectedparrot.com/en/latest/notebooks/analyze_evaluations.html>`_.
+   Analyze survey data with built-in methods. Simulate follow-up interviews with respondents. See `examples <https://docs.expectedparrot.com/en/latest/notebooks/analyze_evaluations.html>`_.
 
 Social science research
-   Explore hypotheses and gather qualitative or quantitative data using AI agents. 
+   Explore hypotheses, gather qualitative or quantitative data and generate new data using AI. 
 
 For more on EDSL's key features and use cases, visit the :ref:`overview` section.
 
@@ -61,23 +61,31 @@ For more on EDSL's key features and use cases, visit the :ref:`overview` section
 Getting started 
 ---------------
 
+*Technical setup:*
+
 1. Install the EDSL package. See :ref:`installation` instructions.
 
 2. Log in to `Coop <https://www.expectedparrot.com/login>`_ to access special features for working with AI agents and language models, storage and collaboration tools.
 
 3. Choose how to access language models: 
    
-   * **Remote:** Use your Expected Parrot API key to access all available models at Coop. See instructions on activating :ref:`remote_inference`.
+   * **Remote:** Use your Expected Parrot API key to access models at Coop. See instructions on activating :ref:`remote_inference` and purchasing `credits <https://docs.expectedparrot.com/en/latest/credits.html>`_.
    * **Local:** Use your own API keys for models to use on your own machine. See instructions on storing :ref:`api_keys`.
 
-4. Explore a :ref:`starter_tutorial`, how-to guides and notebooks, and see `tips <https://docs.expectedparrot.com/en/latest/checklist.html>`_ on using EDSL effectively.
+
+*Support and resources:*
+
+Explore a :ref:`starter_tutorial`, how-to guides and notebooks.
+See `tips <https://docs.expectedparrot.com/en/latest/checklist.html>`_ on using EDSL effectively.
+
+Join our `Discord channel <https://discord.com/invite/mxAYkjfy9m>`_ to ask questions and chat with other users!
 
 
 Researchers
 -----------
 
 Are you using EDSL for a research project?
-Send an email to *info@expectedparrot.com* and we'll give you credits to run your project!
+Send an email to *info@expectedparrot.com* and we'll give you `credits <https://docs.expectedparrot.com/en/latest/credits.html>`_ to run your project!
 
 
 Introduction
@@ -114,6 +122,7 @@ Coop
 `Coop <https://www.expectedparrot.com/content/explore>`_ is a platform for creating, storing and sharing AI-based research.
 It is fully integrated with EDSL and provides access to special features for working with AI agents and language models, storage and collaboration tools, including:
 
+- `Credits <https://docs.expectedparrot.com/en/latest/credits.html>`_: Get credits to use remote inference.
 - :ref:`remote_inference`: Run surveys with any available models on the Expected Parrot server. 
 - :ref:`remote_caching`: Automatically store results and API calls on the Expected Parrot server. 
 - :ref:`survey_builder`: Design and launch hybrid human-AI surveys.
@@ -210,6 +219,7 @@ Links
    :hidden:
 
    coop
+   credits
    notebooks
    remote_inference
    remote_caching

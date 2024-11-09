@@ -28,12 +28,16 @@ class AwsBedrockService(InferenceServiceABC):
         "ai21.j2-ultra",
         "ai21.j2-ultra-v1",
     ]
+    _models_list_cache: List[str] = []
 
     @classmethod
     def available(cls):
         """Fetch available models from AWS Bedrock."""
+
+        region = os.getenv("AWS_REGION", "us-east-1")
+
         if not cls._models_list_cache:
-            client = boto3.client("bedrock", region_name="us-west-2")
+            client = boto3.client("bedrock", region_name=region)
             all_models_ids = [
                 x["modelId"] for x in client.list_foundation_models()["modelSummaries"]
             ]
@@ -80,7 +84,8 @@ class AwsBedrockService(InferenceServiceABC):
                     self.api_token
                 )  # call to check the if env variables are set.
 
-                client = boto3.client("bedrock-runtime", region_name="us-west-2")
+                region = os.getenv("AWS_REGION", "us-east-1")
+                client = boto3.client("bedrock-runtime", region_name=region)
 
                 conversation = [
                     {

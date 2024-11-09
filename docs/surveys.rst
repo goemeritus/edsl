@@ -3,64 +3,89 @@
 Surveys
 =======
 
-A `Survey` is collection of questions that can be administered asynchronously to one or more agents and language models, or according to specified rules such as skip or stop logic.
+A `Survey` is collection of :ref:`questions` that can be administered to one or more AI :ref:`agents` and :ref:`language_models` at once.
+Survey questions can be administered asynchronously (by default), or according to rules such as skip and stop logic, and with or without context of other questions in a survey.
+
+Surveys can be used to collect data, generate content or perform other tasks.
+The results of a survey are stored in a `Results` object, which can be used to analyze the responses and other components of the survey.
+Learn more about built-in methods for working with `Results` objects in the :ref:`results` section.
+
+
+Key steps 
+---------
 
 The key steps to creating and conducting a survey are:
 
-* Creating `Question` objects of various types (multiple choice, checkbox, free text, numerical, linear scale, etc.)
-* Passing questions to a `Survey` to administer them together
-* Running the survey by sending it to a language `Model`
+| 1. Create `Questions` of various types (multiple choice, checkbox, free text, numerical, linear scale, etc.) and combine them in a `Survey` to administer them together. 
+| 2. *Optional:* Add rules to skip, stop or administer questions based on conditional logic, or provide context of other questions and answers in the survey.
+| 3. *Optional:* Design personas for AI `Agents` to answer the questions.
+| 4. Decide whether to use :ref:`remote_inference` or your own :ref:`api_keys` to run the survey.
+| 5. Send the survey to language `Models` of your choice to generate the responses.
 
-When running a survey you can also optionally:
-
-* Add traits for an AI `Agent` (or an `AgentList` of multiple agents) to answer the survey 
-* Add data or content to questions using `Scenario` objects
-* Add conditional rules/logic, context and "memory" of responses to other questions
-
-Running a survey automatically generates a `Results` object containing the responses and other components of the survey (questions, agents, scenarios, models, prompts, raw responses, etc.). 
-See the :ref:`results` module for more information on working with `Results` objects.
+Sending a survey to a language model generates a dataset of `Results` that includes the responses and other components of the survey. 
+Results can be analyzed and visualized using `built-in methods <https://docs.expectedparrot.com/en/latest/results.html>`_ of the `Results` object.
 
 
 Key methods 
 -----------
 
-A survey is administered by calling the `run()` method on the `Survey` object, after adding any agents, scenarios and models with the `by()` method, and any survey rules or memory with the appropriate methods.
-The methods for adding survey rules and memory include the following, which are each discussed in more detail below:
+A survey is administered by calling the `run()` method on the `Survey` object, after adding any agents, scenarios and models with the `by()` method, and any rules or memory with the appropriate methods (see detailed examples of each below):
 
-* `add_skip_rule()` - Skip a question based on a conditional expression (e.g., the response to another question).
+* `add_skip_rule()` - Skip a question based on a conditional expression (e.g., based on a response to another question).
 * `add_stop_rule()` - End the survey based on a conditional expression.
 * `add_rule()` - Administer a specified question next based on a conditional expression.
 * `set_full_memory_mode()` - Include a memory of all prior questions/answers at each new question in the survey.
 * `set_lagged_memory()` - Include a memory of a specified number of prior questions/answers at each new question in the survey.
-* `add_targeted_memory()` - Include a memory of a specific question/answer at another question in the survey.
-* `add_memory_collection()` - Include memories of a set of prior questions/answers at any other question in the survey.
+* `add_targeted_memory()` - Include a memory of a particular question/answer at another question in the survey.
+* `add_memory_collection()` - Include memories of a set of prior questions/answers at another question in the survey.
 
 
 Piping
 ^^^^^^
 
-You can also pipe components of other questions into a question, for example, to reference the response to a previous question in a later question.
-(See examples below.)
+You can also pipe individual components of questions into other questions, such as inserting the answer to a question in the question text of another question.
+This is done by using the `{{ question_name.answer }}` syntax in the text of a question, and is useful for creating dynamic surveys that reference prior answers.
+
+Note that this method is different from memory rules, which automatically inlude the full context of a specified question at a new question in the survey:
+*"Before the question you are now answering, you already answered the following question(s): Question: <question_text> Answer: <answer>"*.
+See examples below.
 
 
 Flow
 ^^^^
 
-A special method `show_flow()` will display the flow of the survey, showing the order of questions and any rules that have been applied.
-(See example below.)
+The `show_flow()` method displays the flow of a survey, showing the order of questions and any rules that have been applied.
+See example below.
+
+
+Rules 
+^^^^^
+
+The `show_rules()` method displays a table of the conditional rules that have been applied to a survey, and the questions they apply to.
+See example below.
+
+
+Prompts
+^^^^^^^
+
+The `show_prompts()` method displays the user and system prompts for each question in a survey.
+This is a companion method to the `prompts()` method of a `Job` object, which returns a dataset containing the prompts together with information about each question, scenario, agent, model and estimated cost.
+(A `Job` is created by adding a `Model` to a `Survey` or `Question`.)
+See example below.
 
 
 Constructing a survey
 ---------------------
 
+In the examples below we construct a simple survey of questions, and then demonstrate how to run it with various rules and memory options, how to add AI agents and language models, and how to analyze the results.
+
+
 Defining questions
 ^^^^^^^^^^^^^^^^^^
 
 Questions can be defined as various types, including multiple choice, checkbox, free text, linear scale, numerical and other types.
-The formats are defined in the `questions` module. 
-Here we define some questions that we use to create a `Survey` object and demonstrate methods for applying survey rules and memory.
-
-We start by creating some questions:
+The formats are defined in the :ref:`questions` module. 
+Here we define some questions by importing question types and creating instances of them:
 
 .. code-block:: python
 
@@ -109,23 +134,21 @@ Alternatively, questions can be added to a survey one at a time:
 
 .. code-block:: python
 
+   from edsl import Survey
+
    survey = Survey().add_question(q1).add_question(q2).add_question(q3).add_question(q4)
+
 
 
 Running a survey
 ----------------
 
-Once constructed, a Survey can be `run`, generating a `Results` object:
+Once constructed, a survey can be administered by calling the `run()` method.
+If question :ref:`scenarios`, :ref:`agents` or :ref:`language_models` have been specified, they are added to the survey with the `by` method when running it.
+(If no language model is specified, the survey will be run with the default model, which can be inspected by running `Model()`.)
 
-.. code-block:: python
-
-   results = survey.run()
-
-
-If question scenarios, agents or language models have been specified, they are added to the survey with the `by` method when running it.
-(If no model is specified, the survey will be run with the default model, which can be inspected by running `Model()`.)
-
-For example, here we run the survey with a simple agent persona and specify that GPT-4o should be used:
+For example, here we run the survey with a simple agent persona and specify that GPT-4o should be used.
+Note that the agent and model can be added in either order, so long as each type of component is added at once (e.g., if using multiple agents or models, pass them as a list to the `by()` method):
 
 .. code-block:: python
 
@@ -138,14 +161,17 @@ For example, here we run the survey with a simple agent persona and specify that
    results = survey.by(agent).by(model).run()
 
 
-Note that these survey components can be chained in any order, so long as each type of component is chained at once (e.g., if adding multiple agents, use `by.(agents)` once where agents is a list of all Agent objects).
+If remote inference is turned on, the survey will be run on the Expected Parrot server and information about accessing the results at your Coop account will be displayed.
+for example:
 
-Learn more about specifying question scenarios, agents and language models and working with results in their respective modules:
+.. code-block:: text
 
-* :ref:`scenarios`
-* :ref:`agents`
-* :ref:`language_models`
-* :ref:`results`
+   Job sent to server. (Job uuid=025d9fdc-efd9-4ca7-ac7a-f5ab28755f4d).
+   Job completed and Results stored on Coop: https://www.expectedparrot.com/content/4cfcf0c6-6aff-4447-90cb-cd9e01111a28.  
+
+
+If remote inference is turned off, the survey will be run locally and results will be added to your local cache only.
+(Learn more about :ref:`data` and :ref:`remote_caching`.)
 
 
 Survey rules & logic
@@ -165,6 +191,8 @@ Note that we can refer to the question to be skipped using either the id ("q2") 
 
 .. code-block:: python
 
+   from edsl import Survey 
+
    survey = Survey(questions = [q1, q2, q3, q4])
    survey = survey.add_skip_rule(q2, "consume_local_news == 'Never'")
 
@@ -172,6 +200,8 @@ Note that we can refer to the question to be skipped using either the id ("q2") 
 This is equivalent:
 
 .. code-block:: python
+
+   from edsl import Survey 
 
    survey = Survey(questions = [q1, q2, q3, q4])
    survey = survey.add_skip_rule("sources", "consume_local_news == 'Never'")
@@ -181,15 +211,11 @@ We can run the survey and verify that the rule was applied:
 
 .. code-block:: python
 
-   from edsl import Agent
-
-   agent = Agent(traits = {"persona": "You are a teenager who hates reading."})
-
-   results = survey.by(agent).run()
+   results = survey.by(agent).by(model).run() # using the agent and model from the previous example
    results.select("consume_local_news", "sources", "rate_coverage", "minutes_reading").print(format="rich")
 
 
-This will print the answers, showing "None" for a skipped question:
+This will print the answers, showing "None" for a skipped question (your own results for answers may vary):
 
 .. code-block:: text
     
@@ -197,7 +223,7 @@ This will print the answers, showing "None" for a skipped question:
    ┃ answer              ┃ answer   ┃ answer         ┃ answer           ┃
    ┃ .consume_local_news ┃ .sources ┃ .rate_coverage ┃ .minutes_reading ┃
    ┡━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━┩
-   │ Never               │ None     │ 5              │ 0                │
+   │ Never               │ None     │ 4              │ 0                │
    └─────────────────────┴──────────┴────────────────┴──────────────────┘
 
 
@@ -214,9 +240,14 @@ We can call the `show_flow()` method to display a graphic of the flow of the sur
 .. image:: static/survey_show_flow.png
    :alt: Survey Flow Diagram
    :align: left
+   :width: 50%
+  
 
-   <br>
-   
+.. raw:: html
+
+  <br><br>
+
+
 
 Stop rules
 ^^^^^^^^^^
@@ -224,7 +255,8 @@ Stop rules
 The `add_stop_rule()` method stops the survey if a condition is met.
 The (2) required parameters are the question to stop at and the condition to evaluate.
 
-Here we use `add_stop_rule()` to end the survey at q1 if the response is "Never":
+Here we use `add_stop_rule()` to end the survey at q1 if the response is "Never"
+(note that we recreate the survey to demonstrate the stop rule alone):
 
 .. code-block:: python
 
@@ -271,7 +303,7 @@ We can run the survey and verify that the rule was applied:
    results.select("consume_local_news", "sources", "rate_coverage", "minutes_reading").print(format="rich")
 
 
-We can see that both q2 and q3 were skipped but q4 was administered:
+We can see that both q2 and q3 were skipped but q4 was administered (and the response makes sense for the agent):
 
 .. code-block:: text
     
@@ -440,6 +472,8 @@ We can also show both system and user prompts together with information about th
 
    job.show_prompts()
 
+
+Output:
 
 .. code-block:: text
 
@@ -674,6 +708,8 @@ Here we use it to give the agent the question/answer to q1 when prompting it to 
    )
 
 
+Output:
+
 .. code-block:: text
 
    ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
@@ -740,6 +776,8 @@ For example, we can add the questions/answers for both q1 and q2 when prompting 
       .print(format="rich")
    )
 
+
+Output:
 
 .. code-block:: text
 

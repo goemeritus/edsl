@@ -37,8 +37,8 @@ def test_prompt_cost_estimation():
     )
 
     assert estimated_cost_dct["input_tokens"] == 7
-    assert estimated_cost_dct["output_tokens"] == 7
-    assert estimated_cost_dct["cost"] == 14
+    assert estimated_cost_dct["output_tokens"] == 6
+    assert estimated_cost_dct["cost_usd"] == 13
 
     estimated_cost_dct = Jobs.estimate_prompt_cost(
         system_prompt="",
@@ -49,8 +49,8 @@ def test_prompt_cost_estimation():
     )
 
     assert estimated_cost_dct["input_tokens"] == 8
-    assert estimated_cost_dct["output_tokens"] == 8
-    assert estimated_cost_dct["cost"] == 16
+    assert estimated_cost_dct["output_tokens"] == 6
+    assert estimated_cost_dct["cost_usd"] == 14
 
 
 def test_prompt_cost_estimation_with_piping():
@@ -63,8 +63,8 @@ def test_prompt_cost_estimation_with_piping():
     )
 
     assert estimated_cost_dct["input_tokens"] == 20
-    assert estimated_cost_dct["output_tokens"] == 20
-    assert estimated_cost_dct["cost"] == 40
+    assert estimated_cost_dct["output_tokens"] == 15
+    assert estimated_cost_dct["cost_usd"] == 35
 
 
 def test_job_cost_estimation():
@@ -83,10 +83,34 @@ def test_job_cost_estimation():
     assert input_tokens == 15
 
     output_tokens = estimated_cost_dct["estimated_total_output_tokens"]
-    assert output_tokens == 15
+    assert output_tokens == 12
 
-    cost = estimated_cost_dct["estimated_total_cost"]
-    assert cost == 30
+    cost = estimated_cost_dct["estimated_total_cost_usd"]
+    assert cost == 27
+
+
+def test_job_cost_estimation_with_iterations():
+    q0 = QuestionFreeText(
+        question_name="q0", question_text="What is your favorite month?"
+    )
+    q1 = QuestionFreeText(
+        question_name="q1", question_text="Why is that your favorite month?"
+    )
+    m = Model("test", canned_response="SPAM!")
+    s = Survey(questions=[q0, q1])
+    j = Jobs(survey=s, models=[m])
+    estimated_cost_dct = Jobs.estimate_job_cost_from_external_prices(
+        j, price_lookup, iterations=2
+    )
+
+    input_tokens = estimated_cost_dct["estimated_total_input_tokens"]
+    assert input_tokens == 30
+
+    output_tokens = estimated_cost_dct["estimated_total_output_tokens"]
+    assert output_tokens == 24
+
+    cost = estimated_cost_dct["estimated_total_cost_usd"]
+    assert cost == 54
 
 
 def test_job_cost_estimation_with_piping():
@@ -106,7 +130,32 @@ def test_job_cost_estimation_with_piping():
     assert input_tokens == 27  # 7 from q0 + 20 from q1
 
     output_tokens = estimated_cost_dct["estimated_total_output_tokens"]
-    assert output_tokens == 27
+    assert output_tokens == 21  # 6 from q0 + 15 from q1
 
-    cost = estimated_cost_dct["estimated_total_cost"]
-    assert cost == 54  # 14 from q0 + 40 from q1
+    cost = estimated_cost_dct["estimated_total_cost_usd"]
+    assert cost == 48  # 7 + 20 + 6 + 15
+
+
+def test_job_cost_estimation_with_piping_and_iterations():
+    q0 = QuestionFreeText(
+        question_name="q0", question_text="What is your favorite month?"
+    )
+    q1 = QuestionFreeText(
+        question_name="q1", question_text="Why is {{ q0.answer }} your favorite month?"
+    )
+    m = Model("test", canned_response="SPAM!")
+    s = Survey(questions=[q0, q1])
+    j = Jobs(survey=s, models=[m])
+    estimated_cost_dct = Jobs.estimate_job_cost_from_external_prices(
+        j, price_lookup, iterations=2
+    )
+
+    # Test to make sure that the piping multiplier has taken effect
+    input_tokens = estimated_cost_dct["estimated_total_input_tokens"]
+    assert input_tokens == 54
+
+    output_tokens = estimated_cost_dct["estimated_total_output_tokens"]
+    assert output_tokens == 42
+
+    cost = estimated_cost_dct["estimated_total_cost_usd"]
+    assert cost == 96

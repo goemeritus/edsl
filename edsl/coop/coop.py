@@ -636,7 +636,9 @@ class Coop:
             "version": data.get("version"),
         }
 
-    def remote_inference_cost(self, input: Union[Jobs, Survey]) -> int:
+    def remote_inference_cost(
+        self, input: Union[Jobs, Survey], iterations: int = 1
+    ) -> int:
         """
         Get the cost of a remote inference job.
 
@@ -661,6 +663,7 @@ class Coop:
                     job.to_dict(),
                     default=self._json_handle_none,
                 ),
+                "iterations": iterations,
             },
         )
         self._resolve_server_response(response)

@@ -26,16 +26,13 @@ How it works
 
 `Create an account <https://www.expectedparrot.com/login>`_ to get access to the Coop API, which allows you to:
 
-* Post notebooks and EDSL objects at the Coop web app (surveys, agents, results, etc.) 
+* Post content at the Coop web app (surveys, agents, results, notebooks, etc.) 
 * Choose the visibility of your content: *public*, *private* or *unlisted*
-* Share projects with your team
-* View and download public and shared content
-* Collaborate with other users by sharing code and examples
+* Update, download, delete, store and share content and projects
 
-Then choose whether to use EDSL locally or at the Expected Parrot server:
-
-* :ref:`remote_inference`: Run surveys on the Expected Parrot server to save time and resources, and avoid needing to manage your own API keys for language models.
-* :ref:`remote_caching`: Automatically store EDSL survey results on the Expected Parrot server to easily access and share them from anywhere. 
+Then activate :ref:`remote_inference` to run surveys on the Expected Parrot server.
+This allows you to avoid needing to manage your own API keys for language models.
+You can also activate :ref:`remote_caching` to automatically store survey results on the Expected Parrot server and access them from anywhere. 
 
 
 Getting started
