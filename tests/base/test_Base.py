@@ -2,7 +2,7 @@ import pytest
 import json
 import warnings
 
-from edsl.Base import RegisterSubclassesMeta, Base
+from edsl.base.Base import RegisterSubclassesMeta, Base
 from edsl.questions import QuestionMultipleChoice
 
 

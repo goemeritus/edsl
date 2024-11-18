@@ -47,7 +47,7 @@ from edsl.utilities.decorators import sync_wrapper, jupyter_nb_handler
 from edsl.utilities.decorators import add_edsl_version, remove_edsl_version
 from edsl.language_models.repair import repair
 from edsl.enums import InferenceServiceType
-from edsl.Base import RichPrintingMixin, PersistenceMixin
+from edsl.base.Base import RichPrintingMixin, PersistenceMixin
 from edsl.language_models.RegisterLanguageModelsMeta import RegisterLanguageModelsMeta
 from edsl.exceptions.language_models import LanguageModelBadResponseError
 

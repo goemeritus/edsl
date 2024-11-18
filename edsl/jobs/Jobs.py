@@ -5,7 +5,7 @@ import requests
 from itertools import product
 from typing import Literal, Optional, Union, Sequence, Generator
 
-from edsl.Base import Base
+from edsl.base.Base import Base
 
 from edsl.exceptions import MissingAPIKeyError
 from edsl.jobs.buckets.BucketCollection import BucketCollection

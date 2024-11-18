@@ -4,14 +4,14 @@ import nest_asyncio
 
 nest_asyncio.apply()
 
-from edsl import __version__ as edsl_version
-
 
 def add_edsl_version(func):
     """
     Decorator for EDSL objects' `to_dict` method.
     - Adds the EDSL version and class name to the dictionary.
+
     """
+    from edsl import __version__ as edsl_version
 
     @functools.wraps(func)
     def wrapper(*args, **kwargs):

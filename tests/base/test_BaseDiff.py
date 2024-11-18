@@ -1,5 +1,5 @@
 import pytest
-from edsl.BaseDiff import (
+from edsl.base.BaseDiff import (
     BaseDiff,
     BaseDiffCollection,
 )  # Adjust the import path as necessary

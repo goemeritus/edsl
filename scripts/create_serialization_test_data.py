@@ -3,7 +3,7 @@ import logging
 import json
 import os
 from edsl import __version__ as edsl_version
-from edsl.Base import RegisterSubclassesMeta
+from edsl.base.Base import RegisterSubclassesMeta
 from edsl.coop.utils import ObjectRegistry, Study
 from edsl.questions import *
 from tests.serialization.cases.RegisterSerializationCasesMeta import (

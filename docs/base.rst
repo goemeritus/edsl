@@ -5,7 +5,7 @@ Base
 Base class
 --------------
 
-.. automodule:: edsl.Base
+.. automodule:: edsl.base.Base
    :members:
    :undoc-members:
    :show-inheritance:

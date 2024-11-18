@@ -3,7 +3,7 @@ from __future__ import annotations
 from collections import UserDict
 from typing import Any, Type, Callable, Optional
 from collections import UserDict
-from edsl.Base import Base
+from edsl.base.Base import Base
 from edsl.utilities.decorators import add_edsl_version, remove_edsl_version
 
 

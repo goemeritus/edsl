@@ -13,15 +13,14 @@ from edsl.exceptions import (
 from edsl.questions.descriptors import QuestionNameDescriptor, QuestionTextDescriptor
 
 
-from edsl.questions.AnswerValidatorMixin import AnswerValidatorMixin
 from edsl.questions.RegisterQuestionsMeta import RegisterQuestionsMeta
-from edsl.Base import PersistenceMixin, RichPrintingMixin
-from edsl.BaseDiff import BaseDiff, BaseDiffCollection
+from edsl.base.Base import PersistenceMixin, RichPrintingMixin
+from edsl.base.BaseDiff import BaseDiff, BaseDiffCollection
 
 from edsl.questions.SimpleAskMixin import SimpleAskMixin
 from edsl.questions.QuestionBasePromptsMixin import QuestionBasePromptsMixin
 from edsl.questions.QuestionBaseGenMixin import QuestionBaseGenMixin
-from edsl.utilities.decorators import add_edsl_version, remove_edsl_version
+from edsl.utilities.decorators import remove_edsl_version
 
 
 class QuestionBase(
@@ -31,7 +30,6 @@ class QuestionBase(
     QuestionBasePromptsMixin,
     QuestionBaseGenMixin,
     ABC,
-    AnswerValidatorMixin,
     metaclass=RegisterQuestionsMeta,
 ):
     """ABC for the Question class. All questions inherit from this class.
@@ -307,12 +305,14 @@ class QuestionBase(
         "Yo, what's up?"
 
         """
+        if "cache" not in kwargs:
+            kwargs["cache"] = False
+
         survey = self.to_survey()
         results = survey(
             model=model,
             agent=agent,
             **kwargs,
-            cache=False,
             disable_remote_cache=disable_remote_cache,
             disable_remote_inference=disable_remote_inference,
         )

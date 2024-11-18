@@ -7,7 +7,8 @@ import requests
 
 from typing import Any, Generator, Optional, Union, List, Literal, Callable
 from uuid import uuid4
-from edsl.Base import Base
+
+from edsl.base.Base import Base
 from edsl.exceptions import SurveyCreationError, SurveyHasNoRulesError
 from edsl.exceptions.surveys import SurveyError
 
@@ -20,7 +21,7 @@ from edsl.surveys.Rule import Rule
 from edsl.surveys.RuleCollection import RuleCollection
 from edsl.surveys.SurveyExportMixin import SurveyExportMixin
 from edsl.surveys.SurveyFlowVisualizationMixin import SurveyFlowVisualizationMixin
-from edsl.utilities.decorators import add_edsl_version, remove_edsl_version
+from edsl.utilities.decorators import remove_edsl_version
 
 from edsl.agents.Agent import Agent
 

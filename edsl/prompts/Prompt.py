@@ -17,7 +17,7 @@ class PreserveUndefined(Undefined):
 
 
 from edsl.exceptions.prompts import TemplateRenderError
-from edsl.Base import PersistenceMixin, RichPrintingMixin
+from edsl.base.Base import PersistenceMixin, RichPrintingMixin
 
 MAX_NESTING = 100
 

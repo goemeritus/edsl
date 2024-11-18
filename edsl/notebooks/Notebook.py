@@ -4,7 +4,8 @@ from __future__ import annotations
 import json
 from typing import Dict, List, Optional, Union
 from uuid import uuid4
-from edsl.Base import Base
+
+from edsl.base.Base import Base
 from edsl.utilities.decorators import add_edsl_version, remove_edsl_version
 
 

@@ -256,7 +256,7 @@ class Study:
 
     def study_diff(self):
         ## Need to also report missing.
-        from edsl.BaseDiff import BaseDiff
+        from edsl.base.BaseDiff import BaseDiff
 
         raise NotImplementedError("Need to implement this.")
 

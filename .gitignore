@@ -42,3 +42,4 @@ venv
 .env*
 docs/notebooks/drafts/*
 test.py
+unused/*

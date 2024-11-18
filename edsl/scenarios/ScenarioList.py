@@ -14,7 +14,7 @@ import inspect
 
 from simpleeval import EvalWithCompoundTypes
 
-from edsl.Base import Base
+from edsl.base.Base import Base
 from edsl.utilities.decorators import add_edsl_version, remove_edsl_version
 from edsl.scenarios.Scenario import Scenario
 from edsl.scenarios.ScenarioListPdfMixin import ScenarioListPdfMixin

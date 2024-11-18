@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 
 from uuid import uuid4
 
-from edsl.Base import Base
+from edsl.base.Base import Base
 from edsl.prompts import Prompt
 from edsl.exceptions import QuestionScenarioRenderError
 

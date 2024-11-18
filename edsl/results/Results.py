@@ -36,7 +36,7 @@ from edsl.utilities.decorators import add_edsl_version, remove_edsl_version
 from edsl.utilities.utilities import dict_hash
 
 
-from edsl.Base import Base
+from edsl.base.Base import Base
 
 
 class Mixins(

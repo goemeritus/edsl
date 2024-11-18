@@ -18,7 +18,7 @@ from typing import Any, List, Optional, Union, TYPE_CHECKING
 from rich import print_json
 from rich.table import Table
 from simpleeval import EvalWithCompoundTypes
-from edsl.Base import Base
+from edsl.base.Base import Base
 from edsl.utilities.decorators import add_edsl_version, remove_edsl_version
 
 from collections.abc import Iterable

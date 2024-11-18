@@ -8,7 +8,7 @@ import os
 import warnings
 import copy
 from typing import Optional, Union
-from edsl.Base import Base
+from edsl.base.Base import Base
 from edsl.data.CacheEntry import CacheEntry
 from edsl.utilities.utilities import dict_hash
 from edsl.utilities.decorators import remove_edsl_version
