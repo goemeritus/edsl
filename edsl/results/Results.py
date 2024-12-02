@@ -139,6 +139,17 @@ class Results(UserList, Mixins, Base):
         }
         return d
 
+    def store(self, d: dict, key: Optional[str] = None) -> None:
+        """Store the results in a dictionary.
+
+        :param d: A dictionary to store the results in.
+        """
+        if key:
+            d[key] = self
+        else:
+            index = len(d.keys())
+            d[index] = self
+
     def compute_job_cost(self, include_cached_responses_in_cost=False) -> float:
         """
         Computes the cost of a completed job in USD.
