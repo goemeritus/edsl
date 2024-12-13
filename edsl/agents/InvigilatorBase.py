@@ -77,7 +77,6 @@ class InvigilatorBase(ABC):
         return PromptConstructor(self, prompt_plan=self.prompt_plan)
 
     def to_dict(self, include_cache=False):
-        breakpoint()
         attributes = [
             "agent",
             "question",
