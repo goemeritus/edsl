@@ -76,7 +76,8 @@ class InvigilatorBase(ABC):
         """Return the prompt constructor."""
         return PromptConstructor(self, prompt_plan=self.prompt_plan)
 
-    def to_dict(self):
+    def to_dict(self, include_cache=False):
+        breakpoint()
         attributes = [
             "agent",
             "question",
@@ -86,10 +87,11 @@ class InvigilatorBase(ABC):
             "current_answers",
             "iteration",
             "additional_prompt_data",
-            "cache",
             "sidecar_model",
             "survey",
         ]
+        if include_cache:
+            attributes.append("cache")
 
         def serialize_attribute(attr):
             value = getattr(self, attr)
@@ -111,6 +113,7 @@ class InvigilatorBase(ABC):
         from edsl.surveys.MemoryPlan import MemoryPlan
         from edsl.language_models.LanguageModel import LanguageModel
         from edsl.surveys.Survey import Survey
+        from edsl.data.Cache import Cache
 
         agent = Agent.from_dict(data["agent"])
         question = QuestionBase.from_dict(data["question"])
@@ -121,7 +124,10 @@ class InvigilatorBase(ABC):
         current_answers = data["current_answers"]
         iteration = data["iteration"]
         additional_prompt_data = data["additional_prompt_data"]
-        cache = Cache.from_dict(data["cache"])
+        if "cache" not in data:
+            cache = {}
+        else:
+            cache = Cache.from_dict(data["cache"])
 
         if data["sidecar_model"] is None:
             sidecar_model = None
