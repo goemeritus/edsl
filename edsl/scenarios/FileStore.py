@@ -3,15 +3,17 @@ import io
 import tempfile
 import mimetypes
 import os
-from typing import Dict, Any, IO, Optional
+from typing import Dict, Any, IO, Optional, Literal, List
 import requests
 from urllib.parse import urlparse
+import time
 import subprocess
 import google.generativeai as genai
 
-from edsl import Scenario
+from edsl import Scenario, ScenarioList
 from edsl.utilities.decorators import add_edsl_version, remove_edsl_version
 from edsl.utilities.utilities import is_notebook
+import asyncio
 
 
 def view_docx(docx_path):
@@ -540,6 +542,104 @@ class FileStore(Scenario):
         from edsl.scenarios.ConstructDownloadLink import ConstructDownloadLink
 
         return ConstructDownloadLink(self).create_link(custom_filename, style)
+
+    @classmethod
+    async def _async_screenshot(
+        cls,
+        url: str,
+        full_page: bool = True,
+        wait_until: Literal[
+            "load", "domcontentloaded", "networkidle", "commit"
+        ] = "networkidle",
+        download_path: Optional[str] = None,
+    ) -> "FileStore":
+        """Async version of screenshot functionality"""
+        try:
+            from playwright.async_api import async_playwright
+        except ImportError:
+            raise ImportError(
+                "Screenshot functionality requires additional dependencies.\n"
+                "Install them with: pip install 'edsl[screenshot]'"
+            )
+
+        if download_path is None:
+            download_path = os.path.join(
+                os.getcwd(), f"screenshot_{int(time.time())}.png"
+            )
+
+        async with async_playwright() as p:
+            browser = await p.chromium.launch()
+            page = await browser.new_page()
+            await page.goto(url, wait_until=wait_until)
+            await page.screenshot(path=download_path, full_page=full_page)
+            await browser.close()
+
+        return cls(download_path, mime_type="image/png")
+
+    @classmethod
+    def from_url_screenshot(cls, url: str, **kwargs) -> "FileStore":
+        """Synchronous wrapper for screenshot functionality"""
+        import asyncio
+
+        try:
+            # Try using get_event_loop first (works in regular Python)
+            loop = asyncio.get_event_loop()
+        except RuntimeError:
+            # If we're in IPython/Jupyter, create a new loop
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+
+        try:
+            return loop.run_until_complete(cls._async_screenshot(url, **kwargs))
+        finally:
+            if not loop.is_running():
+                loop.close()
+
+    @classmethod
+    def batch_screenshots(cls, urls: List[str], **kwargs) -> "ScenarioList":
+        """
+        Take screenshots of multiple URLs concurrently.
+
+        Args:
+            urls: List of URLs to screenshot
+            **kwargs: Additional arguments passed to screenshot function (full_page, wait_until, etc.)
+
+        Returns:
+            ScenarioList containing FileStore objects with their corresponding URLs
+        """
+        from edsl import ScenarioList
+
+        try:
+            # Try using get_event_loop first (works in regular Python)
+            loop = asyncio.get_event_loop()
+        except RuntimeError:
+            # If we're in IPython/Jupyter, create a new loop
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+
+        # Create tasks for all screenshots
+        tasks = [cls._async_screenshot(url, **kwargs) for url in urls]
+
+        try:
+            # Run all screenshots concurrently
+            results = loop.run_until_complete(
+                asyncio.gather(*tasks, return_exceptions=True)
+            )
+
+            # Filter out any errors and log them
+            successful_results = []
+            for url, result in zip(urls, results):
+                if isinstance(result, Exception):
+                    print(f"Failed to screenshot {url}: {result}")
+                else:
+                    successful_results.append(
+                        Scenario({"url": url, "screenshot": result})
+                    )
+
+            return ScenarioList(successful_results)
+        finally:
+            if not loop.is_running():
+                loop.close()
 
 
 class CSVFileStore(FileStore):
