@@ -4,6 +4,8 @@ import asyncio
 import threading
 import warnings
 from typing import TYPE_CHECKING
+from edsl.logging_config import setup_logging
+import logging
 
 from edsl.results.Results import Results
 from edsl.jobs.runners.JobsRunnerStatus import JobsRunnerStatus
@@ -24,6 +26,9 @@ class JobsRunnerAsyncio:
     """
 
     def __init__(self, jobs: "Jobs", environment: RunEnvironment):
+        setup_logging()
+        self.logger = logging.getLogger(__name__)
+        self.logger.info(f"Initializing JobsRunnerAsyncio with {len(jobs)} jobs")
         self.jobs = jobs
         self.environment = environment
 

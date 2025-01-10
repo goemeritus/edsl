@@ -26,6 +26,8 @@ from edsl.exceptions.coop import CoopServerResponseError
 from edsl.jobs.JobsChecks import JobsChecks
 from edsl.jobs.data_structures import RunEnvironment, RunParameters, RunConfig
 
+import logging
+
 if TYPE_CHECKING:
     from edsl.agents.Agent import Agent
     from edsl.agents.AgentList import AgentList
@@ -499,8 +501,13 @@ class Jobs(Base):
             jc.check_api_keys()
 
     async def _execute_with_remote_cache(self, run_job_async: bool) -> Results:
-
+        logger = logging.getLogger(__name__)
         use_remote_cache = self.use_remote_cache()
+
+        if use_remote_cache:
+            logger.info("Remote cache enabled")
+        else:
+            logger.debug("Remote cache disabled")
 
         from edsl.coop.coop import Coop
         from edsl.jobs.runners.JobsRunnerAsyncio import JobsRunnerAsyncio
@@ -516,10 +523,12 @@ class Jobs(Base):
             remote_cache_description=self.run_config.parameters.remote_cache_description,
         ):
             runner = JobsRunnerAsyncio(self, environment=self.run_config.environment)
+            logger.info("Starting job execution")
             if run_job_async:
                 results = await runner.run_async(self.run_config.parameters)
             else:
                 results = runner.run(self.run_config.parameters)
+            logger.info(f"Job completed with {len(results)} results")
         return results
 
     def _setup_and_check(self) -> Tuple[RunConfig, Optional[Results]]:
@@ -543,15 +552,21 @@ class Jobs(Base):
 
     def _run(self, config: RunConfig):
         "Shared code for run and run_async"
+        logger = logging.getLogger(__name__)
+        logger.info(f"Initializing job with {self.num_interviews} interviews")
+
         if config.environment.cache is not None:
+            logger.debug("Using provided cache")
             self.run_config.environment.cache = config.environment.cache
 
         if config.environment.bucket_collection is not None:
+            logger.debug("Using provided bucket collection")
             self.run_config.environment.bucket_collection = (
                 config.environment.bucket_collection
             )
 
         if config.environment.key_lookup is not None:
+            logger.debug("Using provided key lookup")
             self.run_config.environment.key_lookup = config.environment.key_lookup
 
         # replace the parameters with the ones from the config
@@ -560,6 +575,7 @@ class Jobs(Base):
         self.replace_missing_objects()
 
         # try to run remotely first
+        logger.debug("Preparing job and checking remote execution options")
         self._prepare_to_run()
         self._check_if_remote_keys_ok()
 
@@ -567,22 +583,27 @@ class Jobs(Base):
             self.run_config.environment.cache is None
             or self.run_config.environment.cache is True
         ):
+            logger.debug("Initializing default cache")
             from edsl.data.CacheHandler import CacheHandler
 
             self.run_config.environment.cache = CacheHandler().get_cache()
 
         if self.run_config.environment.cache is False:
+            logger.debug("Initializing cache with immediate_write=False")
             from edsl.data.Cache import Cache
 
             self.run_config.environment.cache = Cache(immediate_write=False)
 
         # first try to run the job remotely
         if results := self._remote_results():
+            logger.info("Job executed remotely")
             return results
 
+        logger.debug("Checking local API keys")
         self._check_if_local_keys_ok()
 
         if config.environment.bucket_collection is None:
+            logger.debug("Creating new bucket collection")
             self.run_config.environment.bucket_collection = (
                 self.create_bucket_collection()
             )
@@ -606,9 +627,12 @@ class Jobs(Base):
         :param bucket_collection: A BucketCollection object to track API calls
         :param key_lookup: A KeyLookup object to manage API keys
         """
+        logger = logging.getLogger(__name__)
+        logger.info("Starting synchronous job execution")
         self._run(config)
-
-        return asyncio.run(self._execute_with_remote_cache(run_job_async=False))
+        results = asyncio.run(self._execute_with_remote_cache(run_job_async=False))
+        logger.info("Synchronous job execution completed")
+        return results
 
     @with_config
     async def run_async(self, *, config: RunConfig) -> "Results":
@@ -629,9 +653,12 @@ class Jobs(Base):
         :param bucket_collection: A BucketCollection object to track API calls
         :param key_lookup: A KeyLookup object to manage API keys
         """
+        logger = logging.getLogger(__name__)
+        logger.info("Starting asynchronous job execution")
         self._run(config)
-
-        return await self._execute_with_remote_cache(run_job_async=True)
+        results = await self._execute_with_remote_cache(run_job_async=True)
+        logger.info("Asynchronous job execution completed")
+        return results
 
     def __repr__(self) -> str:
         """Return an eval-able string representation of the Jobs instance."""
