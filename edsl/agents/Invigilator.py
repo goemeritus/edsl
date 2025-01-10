@@ -1,6 +1,6 @@
 """Module for creating Invigilators, which are objects to administer a question to an Agent."""
 
-from typing import Dict, Any, Optional, TYPE_CHECKING
+from typing import Dict, Any, Optional, TYPE_CHECKING, Literal
 
 from edsl.utilities.decorators import sync_wrapper
 from edsl.exceptions.questions import QuestionAnswerValidationError
@@ -12,6 +12,7 @@ if TYPE_CHECKING:
     from edsl.scenarios.Scenario import Scenario
     from edsl.surveys.Survey import Survey
 
+PromptType = Literal["user_prompt", "system_prompt", "encoded_image", "files_list"]
 
 NA = "Not Applicable"
 
@@ -19,7 +20,7 @@ NA = "Not Applicable"
 class InvigilatorAI(InvigilatorBase):
     """An invigilator that uses an AI model to answer questions."""
 
-    def get_prompts(self) -> Dict[str, "Prompt"]:
+    def get_prompts(self) -> Dict[PromptType, "Prompt"]:
         """Return the prompts used."""
         return self.prompt_constructor.get_prompts()
 
