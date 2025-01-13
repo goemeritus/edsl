@@ -421,6 +421,50 @@ class QuestionTextDescriptor(BaseDescriptor):
         return None
 
 
+class ValueTypesDescriptor(BaseDescriptor):
+    def validate(self, value, instance):
+        """Validate the value is a list of strings or None."""
+        if value is None:  # Allow None as a valid value
+            return None
+        if not isinstance(value, list):
+            raise QuestionCreationValidationError(
+                f"`value_types` must be a list or None (got {value})."
+            )
+        # Convert all items in the list to strings
+        return [str(item) for item in value]
+
+
+class ValueDescriptionsDescriptor(BaseDescriptor):
+    def validate(self, value, instance):
+        """Validate the value is a list of strings or None."""
+        if value is None:  # Allow None as a valid value
+            return None
+        if not isinstance(value, list):
+            raise QuestionCreationValidationError(
+                f"`value_descriptions` must be a list or None (got {value})."
+            )
+        if not all(isinstance(x, str) for x in value):
+            raise QuestionCreationValidationError(
+                f"`value_descriptions` must be a list of strings (got {value})."
+            )
+        return value
+
+
+class AnswerKeysDescriptor(BaseDescriptor):
+    """Validate that the `answer_keys` attribute is a list of strings or integers."""
+
+    def validate(self, value, instance):
+        """Validate the value is a list of strings or integers."""
+        if not isinstance(value, list):
+            raise QuestionCreationValidationError(
+                f"`answer_keys` must be a list (got {value})."
+            )
+        if not all(isinstance(x, (str, int)) for x in value):
+            raise QuestionCreationValidationError(
+                f"`answer_keys` must be a list of strings or integers (got {value})."
+            )
+
+
 if __name__ == "__main__":
     import doctest
 

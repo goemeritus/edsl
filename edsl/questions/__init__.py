@@ -12,6 +12,7 @@ from edsl.questions.QuestionFreeText import QuestionFreeText
 from edsl.questions.QuestionFunctional import QuestionFunctional
 from edsl.questions.QuestionList import QuestionList
 from edsl.questions.QuestionMatrix import QuestionMatrix
+from edsl.questions.QuestionDict import QuestionDict
 from edsl.questions.QuestionMultipleChoice import QuestionMultipleChoice
 from edsl.questions.QuestionNumerical import QuestionNumerical
 from edsl.questions.QuestionBudget import QuestionBudget

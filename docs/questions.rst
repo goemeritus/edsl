@@ -3,8 +3,8 @@
 Questions
 =========
 
-EDSL provides templates for many common question types, including free text, multiple choice, checkbox, linear scale, matrix, numerical and others.
-The `Question` class has subclasses for each of these types: `QuestionFreeText`, `QuestionMultipleChoice`, `QuestionCheckBox`, `QuestionLinearScale`, `QuestionMatrix`, `QuestionNumerical`, etc., 
+EDSL provides templates for many common question types, including free text, multiple choice, checkbox, linear scale, matrix, numerical, dictionary and others.
+The `Question` class has subclasses for each of these types: `QuestionFreeText`, `QuestionMultipleChoice`, `QuestionCheckBox`, `QuestionLinearScale`, `QuestionMatrix`, `QuestionNumerical`, `QuestionDict`, etc., 
 which have methods for validating answers and responses from language models.
 
 
@@ -25,6 +25,7 @@ The following question types are available:
 * `QuestionCheckBox` - checkbox questions
 * `QuestionLinearScale` - linear scale questions
 * `QuestionMatrix` - matrix questions
+* `QuestionDict` - dictionary questions
 * `QuestionLikertFive` - Likert scale questions
 * `QuestionRank` - ranked list questions
 * `QuestionTopK` - top-k list questions
@@ -64,6 +65,53 @@ Special parameters
 ^^^^^^^^^^^^^^^^^^
 
 Some question types have additional parameters that are either optional or required to be added to the question when it is created:
+
+`answer_keys` - *Required* parameter of `dict` (dictionary) questions to specify the keys that the respondent must provide in their answer.
+For example, in a dictionary question where the respondent must provide the names of their favorite colors and the number of times they have worn each color in the past week:
+
+.. code-block:: python
+
+   from edsl import QuestionDict
+
+   q = QuestionDict(
+      question_name = "favorite_colors",
+      question_text = "What are your favorite colors and how many times have you worn each color in the past week?",
+      answer_keys = ["color", "times_worn"]
+   )
+
+
+`value_types` - *Optional* parameter of `dict` questions to specify the types of the values that the respondent must provide for each key.
+Permissible types are `str`, `int`, `float`, `list` and their string representations (e.g., `"str"`, `"int"`, `"float"`, `"list"`).
+For example, in a dictionary question where the respondent must provide the names of their favorite colors and the number of times they have worn each color in the past week, and the values must be a string and an integer, respectively:
+
+.. code-block:: python
+
+   from edsl import QuestionDict
+
+   q = QuestionDict(
+      question_name = "favorite_colors",
+      question_text = "What are your favorite colors and how many times have you worn each color in the past week?",
+      answer_keys = ["color", "times_worn"],
+      value_types = [str, int] # optional
+   )
+
+Note that the types can be provided as actual types (e.g., `str`, `int`, `float`, `list`, `dict`, etc.) or as strings (e.g., `"str"`, `"int"`, `"float"`, `"list"`, `"dict"`, etc.).
+
+
+`value_descriptions` - *Optional* parameter of `dict` questions to specify descriptions of the values that the respondent must provide for each key.
+For example, in a dictionary question where the respondent is asked to draft a tweet and provide the text and the number of characters in the tweet:
+
+.. code-block:: python
+
+   from edsl import QuestionDict
+
+   q = QuestionDict(
+      question_name = "tweet",
+      question_text = "Draft a tweet.",
+      answer_keys = ["text", "characters"],
+      value_descriptions = ["The text of the tweet", "The number of characters in the tweet"] # optional
+   )
+
 
 `question_items` - *Required* parameter of `matrix` questions to specify the row items.
 For example, in a matrix question where the respondent must rate a list of items on a scale of 1 to 5:
@@ -249,8 +297,8 @@ Example results:
      - Top half
 
 
-Optional parameters
-^^^^^^^^^^^^^^^^^^^
+General optional parameters
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The following optional parameters can be added to any question type (examples of each are provided at the end of this section):
 
@@ -917,6 +965,41 @@ An example can also be created using the `example` method:
    :show-inheritance:
    :special-members: __init__
    :exclude-members: question_type, question_items, question_options, option_labels, main
+
+
+QuestionDict 
+^^^^^^^^^^^^
+
+A subclass of the `Question` class for creating questions where the response is a dictionary of answers.
+It specially requires an `answer_keys` list of strings for the keys of the dictionary.
+The `value_types` and `value_descriptions` parameters can be used to specify the types and descriptions of the values that should be entered for each key.
+Example usage:
+
+.. code-block:: python
+
+   from edsl import QuestionDict
+
+   q = QuestionDict(
+      question_name = "recipe",
+      question_text = "Please draft an easy recipe for hot chocolate.",
+      answer_keys = ["title", "ingedients", "num_ingredients", "instructions"],
+      value_types = [str, list, int, list], # optional
+      value_descriptions = ["Title of the recipe", "List of ingredients", "Number of ingredients", "Instructions"] # optional
+   )
+
+An example can also be created using the `example` method:
+
+.. code-block:: python
+
+   QuestionDict.example()
+
+
+.. automodule:: edsl.questions.QuestionDict
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :special-members: __init__
+   :exclude-members: question_type, answer_keys, value_types, value_descriptions, main
 
 
 QuestionLinearScale class

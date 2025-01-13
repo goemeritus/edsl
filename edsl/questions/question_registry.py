@@ -96,7 +96,7 @@ class Question(metaclass=Meta):
 
         >>> from edsl import Question
         >>> Question.list_question_types()
-        ['checkbox', 'extract', 'free_text', 'functional', 'likert_five', 'linear_scale', 'list', 'matrix', 'multiple_choice', 'numerical', 'rank', 'top_k', 'yes_no']
+        ['checkbox', 'dict', 'extract', 'free_text', 'functional', 'likert_five', 'linear_scale', 'list', 'matrix', 'multiple_choice', 'numerical', 'rank', 'top_k', 'yes_no']
         """
         return [
             q

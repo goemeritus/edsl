@@ -391,6 +391,10 @@ class Survey(SurveyExportMixin, Base):
 
             if (class_name := pass_dict.get("edsl_class_name")) == "QuestionBase":
                 return QuestionBase
+            elif pass_dict.get("edsl_class_name") == "QuestionDict":
+                from edsl.questions.QuestionDict import QuestionDict
+
+                return QuestionDict
             elif class_name == "Instruction":
                 from edsl.surveys.instructions.Instruction import Instruction
 

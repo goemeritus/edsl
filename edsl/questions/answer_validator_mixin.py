@@ -324,6 +324,35 @@ class AnswerValidatorMixin:
                     f"Must be one of: {valid_options}"
                 )
 
+    def _validate_answer_dict(self, answer: dict[str, Any]) -> None:
+        """Validate QuestionDict-specific answer.
+
+        Check that answer["answer"]:
+        - is a dictionary
+        - has all required answer_keys as keys
+        """
+        value = answer.get("answer")
+
+        # Check that answer is a dictionary
+        if not isinstance(value, dict):
+            raise QuestionAnswerValidationError(
+                f"Dict answer must be a dictionary mapping values to specified keys (got {value})"
+            )
+
+        # Check that all required answer keys are present
+        required_keys = set(self.answer_keys)
+        provided_keys = set(value.keys())
+
+        if missing_keys := (required_keys - provided_keys):
+            raise QuestionAnswerValidationError(
+                f"Missing required keys: {missing_keys}"
+            )
+
+        if extra_keys := (provided_keys - required_keys):
+            raise QuestionAnswerValidationError(
+                f"Unexpected keys: {extra_keys}"
+            )
+
 
 if __name__ == "__main__":
     pass

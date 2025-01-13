@@ -8,7 +8,7 @@ from edsl.questions.descriptors import IntegerDescriptor, QuestionOptionsDescrip
 from edsl.questions.response_validator_abc import ResponseValidatorABC
 
 
-class BudgewResponseValidator(ResponseValidatorABC):
+class BudgetResponseValidator(ResponseValidatorABC):
     valid_examples = []
 
     invalid_examples = []
@@ -64,7 +64,7 @@ class QuestionBudget(QuestionBase):
     budget_sum: int = IntegerDescriptor(none_allowed=False)
     question_options: list[str] = QuestionOptionsDescriptor(q_budget=True)
     _response_model = None
-    response_validator_class = BudgewResponseValidator
+    response_validator_class = BudgetResponseValidator
 
     def __init__(
         self,

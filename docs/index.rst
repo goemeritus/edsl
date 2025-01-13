@@ -213,12 +213,12 @@ Links
    :hidden:
 
    coop
-   survey_builder
+   filestore
    notebooks
    colab_notebooks
    remote_inference
    remote_caching
-   filestore
+   survey_builder
 
 .. toctree::
    :maxdepth: 2
@@ -246,6 +246,7 @@ Links
    notebooks/import_agents.ipynb
    notebooks/batching_results.ipynb
    notebooks/research_methods.ipynb
+   notebooks/agent_fatigue.ipynb
 
 .. toctree::
    :maxdepth: 2

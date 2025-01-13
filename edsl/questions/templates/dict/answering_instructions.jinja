@@ -1,0 +1,21 @@
+Please respond with a dictionary using the following keys: {{ answer_keys | join(', ') }}.
+
+{% if value_descriptions %}
+Here are descriptions of the values to provide:
+{% for idx in range(answer_keys | length) %}
+- "{{ answer_keys[idx] }}": "{{ value_descriptions[idx] }}"
+{% endfor %}
+{% endif %}
+
+{% if value_types %}
+The values should be formatted in the following types:
+{% for idx in range(answer_keys | length) %}
+- "{{ answer_keys[idx] }}": "{{ value_types[idx] }}"
+{% endfor %}
+{% endif %}
+
+If you do not have a value for a given key, use "null".
+
+{% if include_comment %}
+After the answer, you can put a comment explaining your response on the next line.
+{% endif %}

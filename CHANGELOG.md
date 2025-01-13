@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.1.40] - TBD
+### Added
+- Question type `QuestionDict`. Details: https://docs.expectedparrot.com/en/latest/questions.html#questiodict-class
+
+
 ## [0.1.39] - 2025-01-08
 ### Added
 - Question type `QuestionMatrix`. Details: https://docs.expectedparrot.com/en/latest/questions.html#questionmatrix-class
