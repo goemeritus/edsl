@@ -515,6 +515,7 @@ class Jobs(Base):
         #     remote_cache_description=self.run_config.parameters.remote_cache_description,
         # ):
         runner = JobsRunnerAsyncio(self, environment=self.run_config.environment)
+        run_job_async = True
         if run_job_async:
             results = await runner.run_async(self.run_config.parameters)
         else:

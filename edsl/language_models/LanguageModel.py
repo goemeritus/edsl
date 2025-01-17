@@ -394,7 +394,10 @@ class LanguageModel(
             from edsl.config import CONFIG
 
             TIMEOUT = float(CONFIG.get("EDSL_API_TIMEOUT"))
-
+            print("#######DEBUG############")
+            print(
+                "Calling model to answer question prompt:\n" + user_prompt, flush=True
+            )
             response = await asyncio.wait_for(f(**params), timeout=TIMEOUT)
             new_cache_key = cache.store(
                 **cache_call_params, response=response
@@ -571,7 +574,6 @@ class LanguageModel(
             return Model(skip_api_key_check=True)
 
     def from_cache(self, cache: "Cache") -> LanguageModel:
-
         from copy import deepcopy
         from types import MethodType
         from edsl import Cache
