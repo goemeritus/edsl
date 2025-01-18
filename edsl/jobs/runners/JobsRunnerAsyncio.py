@@ -97,6 +97,7 @@ class JobsRunnerAsyncio:
             """Conducted the interviews and append to the results list."""
             result_generator = AsyncInterviewRunner(self.jobs, run_config)
             async for result, interview in result_generator.run():
+                # print("Line 100 in JobsRunnerAsyncio.py - iterating through results")
                 results.append(result)
                 results.task_history.add_interview(interview)
 

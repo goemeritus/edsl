@@ -263,10 +263,11 @@ class Interview:
             model_buckets = ModelBuckets.infinity_bucket()
 
         # was "self.tasks" - is that necessary?
+        afc = AnswerQuestionFunctionConstructor(
+            self, key_lookup=run_config.environment.key_lookup
+        )
         self.tasks = self.task_manager.build_question_tasks(
-            answer_func=AnswerQuestionFunctionConstructor(
-                self, key_lookup=run_config.environment.key_lookup
-            )(),
+            answer_func=afc.answer_question_and_record_task,
             token_estimator=RequestTokenEstimator(self),
             model_buckets=model_buckets,
         )
@@ -281,9 +282,12 @@ class Interview:
             key_lookup=run_config.environment.key_lookup,
         )
         self.invigilators = [fetcher(question) for question in self.survey.questions]
+        # breakpoint()
+        print("Ready to run tasks")
         await asyncio.gather(
             *self.tasks, return_exceptions=not run_config.parameters.stop_on_exception
         )
+        print("Tasks are done")
         self.answers.replace_missing_answers_with_none(self.survey)
         valid_results = list(
             self._extract_valid_results(self.tasks, self.invigilators, self.exceptions)

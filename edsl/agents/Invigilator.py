@@ -42,7 +42,10 @@ class InvigilatorAI(InvigilatorBase):
         if self.key_lookup:
             self.model.set_key_lookup(self.key_lookup)
 
-        return await self.model.async_get_response(**params)
+        print("\t\t\tIn invigilator, waiting on the language model")
+        response = await self.model.async_get_response(**params)
+        print("\t\t\tGot response from language model")
+        return response
 
     def store_response(self, agent_response_dict: AgentResponseDict) -> None:
         """Store the response in the invigilator, in case it is needed later because of validation failure."""
@@ -55,7 +58,9 @@ class InvigilatorAI(InvigilatorBase):
 
         >>> i = InvigilatorAI.example()
         """
+        print("In the InvigitatorAI async_answer_question - waiting on agent response")
         agent_response_dict: AgentResponseDict = await self.async_get_agent_response()
+        print("Got agent response")
         self.store_response(agent_response_dict)
         return self._extract_edsl_result_entry_and_validate(agent_response_dict)
 

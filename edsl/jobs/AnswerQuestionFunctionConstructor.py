@@ -131,8 +131,8 @@ class AnswerQuestionFunctionConstructor:
         if stop_on_exception:
             raise e
 
-    def __call__(self):
-        return self.answer_question_and_record_task
+    # def __call__(self):
+    #     return self.answer_question_and_record_task
 
     async def answer_question_and_record_task(
         self,
@@ -167,9 +167,13 @@ class AnswerQuestionFunctionConstructor:
                 )
 
             try:
+                print(
+                    "Awaiting on the invigilator (inside the AnswerQuestionFunctionConstructor.py file)"
+                )
                 response: EDSLResultObjectInput = (
                     await invigilator.async_answer_question()
                 )
+                print("Got a response back")
                 if response.validated:
                     self.interview.answers.add_answer(
                         response=response, question=question

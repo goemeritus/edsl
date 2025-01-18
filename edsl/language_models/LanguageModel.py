@@ -394,11 +394,14 @@ class LanguageModel(
             from edsl.config import CONFIG
 
             TIMEOUT = float(CONFIG.get("EDSL_API_TIMEOUT"))
-            print("#######DEBUG############")
+            # print("#######DEBUG############")
+            spacer = "".join(["\t"] * 7)
             print(
-                "Calling model to answer question prompt:\n" + user_prompt, flush=True
+                spacer + "Calling model to answer question prompt:" + user_prompt,
+                flush=True,
             )
             response = await asyncio.wait_for(f(**params), timeout=TIMEOUT)
+            print(spacer + "Model call completed", flush=True)
             new_cache_key = cache.store(
                 **cache_call_params, response=response
             )  # store the response in the cache
@@ -459,9 +462,11 @@ class LanguageModel(
             params.update({"invigilator": kwargs["invigilator"]})
 
         model_inputs = ModelInputs(user_prompt=user_prompt, system_prompt=system_prompt)
+        print("\t\t\t\t In LanguageModel - waiting on model call")
         model_outputs: ModelResponse = (
             await self._async_get_intended_model_call_outcome(**params)
         )
+        print("\t\t\t\t In LanguageModel - model call completed")
         edsl_dict: EDSLOutput = self.parse_response(model_outputs.response)
 
         agent_response_dict = AgentResponseDict(
