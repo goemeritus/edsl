@@ -182,6 +182,44 @@ def test_QuestionMultipleChoice_answers():
     with pytest.raises(QuestionAnswerValidationError):
         q._validate_answer({"answer": {"answer": 0}})
 
+def test_QuestionMultipleChoice_with_option_labels():
+    question = QuestionMultipleChoice(
+        question_name="favorite_time",
+        question_text="What is your favorite time of day?",
+        question_options=["morning", "afternoon", "evening", "night"],
+        option_labels=[
+            "Between 6:00 AM and 12:00 PM",
+            "Between 12:00 PM and 6:00 PM",
+            "Between 6:00 PM and 12:00 AM",
+            "Between 12:00 AM and 6:00 AM",
+        ]
+    )
+
+    assert question.option_labels is not None
+    assert len(question.option_labels) == len(question.question_options)
+    assert question.option_labels[1] == "Between 12:00 PM and 6:00 PM"
+
+def test_create_response_model_with_option_labels():
+    """Ensure option_labels are correctly included in the response model schema."""
+    question = QuestionMultipleChoice(
+        question_name="music_preference",
+        question_text="Which music genre do you prefer?",
+        question_options=["rock", "pop", "jazz", "classical"],
+        option_labels=[
+            "Rock - Energetic and guitar-driven.",
+            "Pop - Catchy and radio-friendly.",
+            "Jazz - Improvisational and soulful.",
+            "Classical - Timeless and orchestral."
+        ]
+    )
+
+    response_model = question.create_response_model()
+    schema = response_model.schema()
+
+    assert "option_labels" in schema
+    assert schema["option_labels"]["rock"] == "Rock - Energetic and guitar-driven."
+    assert schema["option_labels"]["pop"] == "Pop - Catchy and radio-friendly."
+    assert schema["option_labels"]["jazz"] == "Jazz - Improvisational and soulful."
 
 def test_permissive():
     q = QuestionMultipleChoice(**valid_question | {"permissive": True})

@@ -129,7 +129,12 @@ For example, in a matrix question where the respondent must rate a list of items
    )
 
 
-`option_labels` - *Optional* parameter of `linear_scale` and `matrix` questions to specify labels for the scale options.
+`option_labels` - *Optional* parameter of `multiple_choice`, `linear_scale` and `matrix` questions to specify labels for the question options or provide more information about them.
+
+* For `multiple_choice` and `checkbox` questions, the labels must be a list of strings with a label for each option (the number of question options must equal the number of option labels). 
+
+* For `linear_scale` and `matrix` questions, the labels must be a dictionary with the option values as keys and the labels as values. There can be any number of labels (e.g., you might only want to label the first and last options).
+
 For example, in a linear scale question where the response must be an integer between 1 and 5 reflecting the respondent's agreement with a statement:
 
 .. code-block:: python
@@ -141,6 +146,42 @@ For example, in a linear scale question where the response must be an integer be
       question_text = "Please indicate whether you agree with the following statement: I am only happy when it rains.",
       question_options = [1, 2, 3, 4, 5],
       option_labels = {1: "Strongly disagree", 5: "Strongly agree"} # optional
+   )
+
+
+In a multiple choice or checkbox question, the option labels can be useful when you want to keep the question options short but provide more information about each option in the user prompt.
+For example:
+
+.. code-block:: python
+
+   from edsl import QuestionMultipleChoice
+
+   q = QuestionMultipleChoice(
+      question_name = "favorite_time",
+      question_text = "What is your favorite time of day?",
+      question_options = ["Morning", "Afternoon", "Evening", "Night"],
+      option_labels = [
+         "6:00AM - 12:00PM",
+         "12:00PM - 6:00PM",
+         "6:00PM - 12:00AM",
+         "12:00AM - 6:00AM"
+      ] # optional
+   )
+
+
+.. code-block:: python
+
+   from edsl import QuestionCheckBox
+
+   q = QuestionCheckBox(
+      question_name = "workplace_preferences",
+      question_text = "Where do you like to work? Select all that apply.",
+      question_options = ["Remote", "Hybrid", "In-person"],
+      option_labels = [
+         "Work from home",
+         "Work from home 2-3 days a week",
+         "Work from the office"
+      ] # optional
    )
 
 

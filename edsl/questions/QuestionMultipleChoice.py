@@ -11,11 +11,12 @@ from edsl.questions.decorators import inject_exception
 from edsl.questions.response_validator_abc import ResponseValidatorABC
 
 
-def create_response_model(choices: List[str], permissive: bool = False):
+def create_response_model(choices: List[str], option_labels: Optional[List[str]] = None, permissive: bool = False):
     """
     Create a ChoiceResponse model class with a predefined list of choices.
 
     :param choices: A list of allowed values for the answer field.
+    :param option_labels: A list of display labels corresponding to choices.
     :param permissive: If True, any value will be accepted as an answer.
     :return: A new Pydantic model class.
     """
@@ -26,9 +27,7 @@ def create_response_model(choices: List[str], permissive: bool = False):
         class ChoiceResponse(BaseModel):
             answer: Literal[choice_tuple] = Field(description="Selected choice")
             comment: Optional[str] = Field(None, description="Optional comment field")
-            generated_tokens: Optional[Any] = Field(
-                None, description="Generated tokens"
-            )
+            generated_tokens: Optional[Any] = Field(None, description="Generated tokens")
 
             class Config:
                 @staticmethod
@@ -36,15 +35,15 @@ def create_response_model(choices: List[str], permissive: bool = False):
                     for prop in schema.get("properties", {}).values():
                         if prop.get("title") == "answer":
                             prop["enum"] = choices
+                    if option_labels and len(option_labels) == len(choices):
+                        schema["option_labels"] = dict(zip(choices, option_labels))
 
     else:
 
         class ChoiceResponse(BaseModel):
             answer: Any = Field(description="Selected choice (can be any value)")
             comment: Optional[str] = Field(None, description="Optional comment field")
-            generated_tokens: Optional[Any] = Field(
-                None, description="Generated tokens"
-            )
+            generated_tokens: Optional[Any] = Field(None, description="Generated tokens")
 
             class Config:
                 @staticmethod
@@ -53,6 +52,8 @@ def create_response_model(choices: List[str], permissive: bool = False):
                         if prop.get("title") == "answer":
                             prop["description"] += f". Suggested choices are: {choices}"
                     schema["title"] += " (Permissive)"
+                    if option_labels:
+                        schema["option_labels"] = dict(zip(choices, option_labels))
 
     return ChoiceResponse
 
@@ -131,6 +132,7 @@ class QuestionMultipleChoice(QuestionBase):
         question_name: str,
         question_text: str,
         question_options: Union[list[str], list[list], list[float], list[int]],
+        option_labels: Optional[list[str]] = None,
         include_comment: bool = True,
         use_code: bool = False,
         answering_instructions: Optional[str] = None,
@@ -142,6 +144,7 @@ class QuestionMultipleChoice(QuestionBase):
         :param question_name: The name of the question.
         :param question_text: The text of the question.
         :param question_options: The options the agent should select from.
+        :param option_labels: The labels for the options.
         :param include_comment: Whether to include a comment field.
         :param use_code: Whether to use code for the options.
         :param answering_instructions: Instructions for the question.
@@ -153,6 +156,7 @@ class QuestionMultipleChoice(QuestionBase):
         self.question_text = question_text
         self.question_options = question_options
 
+        self.option_labels = option_labels
         self._include_comment = include_comment
         self.use_code = use_code
         self.answering_instructions = answering_instructions
@@ -170,10 +174,10 @@ class QuestionMultipleChoice(QuestionBase):
 
         if self.use_code:
             return create_response_model(
-                list(range(len(self.question_options))), self.permissive
+                list(range(len(self.question_options))), self.option_labels, self.permissive
             )
         else:
-            return create_response_model(self.question_options, self.permissive)
+            return create_response_model(self.question_options, self.option_labels, self.permissive)
 
     @staticmethod
     def _translate_question_options(

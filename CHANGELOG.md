@@ -10,6 +10,8 @@
 
 - Method `ScenarioList.from_pdf_to_image(<filename>)` generates a scenario for each page of a pdf converted into a jpeg (to use as an image instead of converting to text). Companion method `Scenario.from_pdf_to_image(<filename>)` generates a key/value for each page within the same scenario object to allow you to use multiple images at the same time. See a [notebook of examples](https://www.expectedparrot.com/content/ea777fab-9cb1-4738-8fa3-bbdef20ed60d).
 
+- Question types multiple choice and checkbox now (also) take an optional parameter `option_labels` consisting of descriptions for the (required) `question_options`. The option labels must be a list that includes a label for each option; in contrast, option labels for linear scale and matrix questions are an optional dictionary that uses the question options as the keys and any number of labels can be included (e.g., you could just have option labels for the first and last linear scale options, whereas if you provide any labels for a multiple choice or checkbox question the number of labels must equal the number of options). This can be useful if you want to keep answer multiple choice or checkbox options short but include more details for the model to reference. 
+
 ### Changed
 
 ### Fixed
