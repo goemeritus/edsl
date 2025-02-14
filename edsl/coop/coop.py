@@ -348,6 +348,19 @@ class Coop(CoopFunctionsMixin):
     ################
     # Objects
     ################
+    def _get_object_alias_url(
+        self, alias: str, owner_username: Optional[str] = None
+    ) -> Optional[str]:
+        """
+        Returns the alias url of an object.
+        If the user has not set a username, the url will be None.
+        """
+
+        if owner_username is not None:
+            return f"{self.url}/content/{owner_username}/{alias}"
+        else:
+            return None
+
     def create(
         self,
         object: EDSLObject,
@@ -376,10 +389,15 @@ class Coop(CoopFunctionsMixin):
         )
         self._resolve_server_response(response)
         response_json = response.json()
+
         return {
             "description": response_json.get("description"),
             "object_type": object_type,
             "url": f"{self.url}/content/{response_json.get('uuid')}",
+            "alias_url": self._get_object_alias_url(
+                alias=response_json.get("alias"),
+                owner_username=response_json.get("owner_username"),
+            ),
             "uuid": response_json.get("uuid"),
             "version": self._edsl_version,
             "visibility": response_json.get("visibility"),
@@ -445,6 +463,10 @@ class Coop(CoopFunctionsMixin):
                 "description": o.get("description"),
                 "visibility": o.get("visibility"),
                 "url": f"{self.url}/content/{o.get('uuid')}",
+                "alias_url": self._get_object_alias_url(
+                    alias=o.get("alias"),
+                    owner_username=o.get("owner_username"),
+                ),
             }
             for o in response.json()
         ]
