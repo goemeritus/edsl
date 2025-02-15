@@ -190,7 +190,7 @@ class Coop(CoopFunctionsMixin):
                 server_version_str=server_edsl_version,
             ):
                 print(
-                    "Please upgrade your EDSL version to access our latest features. To upgrade, open your terminal and run `pip install --upgrade edsl`"
+                    "Please upgrade your EDSL version to access our latest features. Open your terminal and run `pip install --upgrade edsl`"
                 )
 
         if response.status_code >= 400:
@@ -212,7 +212,7 @@ class Coop(CoopFunctionsMixin):
                 print("Your Expected Parrot API key is invalid.")
                 self._display_login_url(
                     edsl_auth_token=edsl_auth_token,
-                    link_description="\n🔗 Use the link below to log in to Expected Parrot so we can automatically update your API key.",
+                    link_description="\n🔗 Use the link below to log in to your account and automatically update your API key.",
                 )
                 api_key = self._poll_for_api_key(edsl_auth_token)
 
@@ -1028,15 +1028,28 @@ class Coop(CoopFunctionsMixin):
         - We need this function because URL detection with print() does not work alongside animations in VSCode.
         """
         from rich import print as rich_print
+        from rich.console import Console
+
+        console = Console()
 
         url = f"{CONFIG.EXPECTED_PARROT_URL}/login?edsl_auth_token={edsl_auth_token}"
 
-        if link_description:
-            rich_print(
-                f"{link_description}\n    [#38bdf8][link={url}]{url}[/link][/#38bdf8]"
-            )
+        if console.is_terminal:
+            # Running in a standard terminal, show the full URL
+            if link_description:
+                rich_print("{link_description}\n[#38bdf8][link={url}]{url}[/link][/#38bdf8]")
+            else:
+                rich_print(f"[#38bdf8][link={url}]{url}[/link][/#38bdf8]")
         else:
-            rich_print(f"    [#38bdf8][link={url}]{url}[/link][/#38bdf8]")
+            # Running in an interactive environment (e.g., Jupyter Notebook), hide the URL
+            if link_description:
+                rich_print(f"{link_description}\n[#38bdf8][link={url}][underline]Log in and automatically store key[/underline][/link][/#38bdf8]")
+            else:
+                rich_print(f"[#38bdf8][link={url}][underline]Log in and automatically store key[/underline][/link][/#38bdf8]")
+
+
+
+
 
     def _get_api_key(self, edsl_auth_token: str):
         """

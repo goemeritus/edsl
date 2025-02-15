@@ -4,10 +4,9 @@ class CoopFunctionsMixin:
 
         s = Scenario({"existing_names": existing_names})
         q = QuestionList(
-            question_text="""The following colum names are already in use: {{ existing_names }} 
-                         Please provide new names for the columns.
-                         They should be short, one or two words, and unique. They should be valid Python idenifiers. 
-                         No spaces - use underscores instead. 
+            question_text="""The following column names are already in use: {{ existing_names }} 
+                         Please provide new column names.
+                         They should be short (one or two words) and unique valid Python idenifiers (i.e., use underscores instead of spaces). 
                          """,
             question_name="better_names",
         )

@@ -24,7 +24,7 @@ class JobsChecks:
 
     def get_missing_api_keys(self) -> set:
         """
-        Returns a list of the api keys that a user needs to run this job, but does not currently have in their .env file.
+        Returns a list of the API keys that a user needs to run this job, but does not currently have in their .env file.
         """
         missing_api_keys = set()
 
@@ -134,22 +134,20 @@ class JobsChecks:
 
         edsl_auth_token = secrets.token_urlsafe(16)
 
-        print("API keys are required to run surveys with language models. The following keys are needed to run this survey: ")
+        print("\nThe following keys are needed to run this survey: \n")
         for api_key in missing_api_keys:
-            print(f"     🔑 {api_key}")
+            print(f"🔑 {api_key}")
         print(
-            "\nYou can provide your own keys or use an Expected Parrot key to access all available models."
+            """
+            \nYou can provide your own keys for language models or use an Expected Parrot key to access all available models.
+            \nClick the link below to create an account and run your survey with your Expected Parrot key:
+            """
         )
-        print("Please see the documentation page to learn about options for managing keys: https://docs.expectedparrot.com/en/latest/api_keys.html")
-
+    
         coop = Coop()
         coop._display_login_url(
             edsl_auth_token=edsl_auth_token,
-            link_description="\n➡️ Click the link below to create an account and get an Expected Parrot key:\n",
-        )
-
-        print(
-            "\nOnce you log in, your key will be stored on your computer and your survey will start running at the Expected Parrot server."
+            # link_description="",
         )
 
         api_key = coop._poll_for_api_key(edsl_auth_token)
@@ -159,8 +157,7 @@ class JobsChecks:
             return
 
         path_to_env = write_api_key_to_env(api_key)
-        print("\n✨ Your key has been stored at the following path: ")
-        print(f"    {path_to_env}")
+        print(f"\n✨ Your Expected Parrot key has been stored at the following path: {path_to_env}\n")
 
         # Retrieve API key so we can continue running the job
         load_dotenv()
