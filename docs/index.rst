@@ -286,7 +286,6 @@ Links
    notebooks/scenariolist_unpivot.ipynb
    notebooks/random_numbers.ipynb
    notebooks/testing_training_data.ipynb
-   notebooks/comparing_model_responses.ipynb
    notebooks/evaluating_job_posts.ipynb
    notebooks/explore_llm_biases.ipynb
    notebooks/research_random_silicon_sampling.ipynb
