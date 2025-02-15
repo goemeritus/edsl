@@ -67,7 +67,7 @@ class InferenceServiceType(EnumWithChecks):
     TOGETHER = "together"
     PERPLEXITY = "perplexity"
     DEEPSEEK = "deepseek"
-    GROK = "grok"
+    XAI = "xai"
 
 
 # unavoidable violation of the DRY principle but it is necessary
@@ -87,7 +87,7 @@ InferenceServiceLiteral = Literal[
     "together",
     "perplexity",
     "deepseek",
-    "grok",
+    "xai",
 ]
 
 available_models_urls = {
@@ -111,7 +111,7 @@ service_to_api_keyname = {
     InferenceServiceType.TOGETHER.value: "TOGETHER_API_KEY",
     InferenceServiceType.PERPLEXITY.value: "PERPLEXITY_API_KEY",
     InferenceServiceType.DEEPSEEK.value: "DEEPSEEK_API_KEY",
-    InferenceServiceType.GROK.value: "XAI_API_KEY",
+    InferenceServiceType.XAI.value: "XAI_API_KEY",
 }
 
 
