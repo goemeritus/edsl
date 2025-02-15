@@ -130,25 +130,18 @@ class Model(metaclass=Meta):
         return [r for r in cls.services(name_only=True)]
 
     @classmethod
-    def services(cls, name_only: bool = False) -> List[str]:
-        """Returns a list of services, annotated with whether the user has local keys for them."""
-        services_with_local_keys = set(cls.key_info().select("service").to_list())
-        f = lambda service_name: (
-            "yes" if service_name in services_with_local_keys else " "
-        )
-        if name_only:
-            return PrettyList(
-                [r._inference_service_ for r in cls.get_registry().services],
-                columns=["Service Name"],
-            )
-        else:
-            return PrettyList(
+    def services(cls) -> List[str]:
+        """Returns a list of services excluding 'test', sorted alphabetically."""
+        return PrettyList(
+            sorted(
                 [
-                    (r._inference_service_, f(r._inference_service_))
+                    r._inference_service_
                     for r in cls.get_registry().services
-                ],
-                columns=["Service Name", "Local key?"],
-            )
+                    if r._inference_service_.lower() != "test"
+                ]
+            ),
+            columns=["Service Name"],
+        )
 
     @classmethod
     def services_with_local_keys(cls) -> set:
